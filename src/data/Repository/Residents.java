@@ -10,15 +10,25 @@ public class Residents implements ResidentRepository{
     private List<Resident> residents = new ArrayList<>();
     private int countId;
     Resident resident = new Resident();
+
     @Override
     public Resident save(Resident resident) {
-
-        resident.setId(generateId());
-        residents.add(resident);
+       if(isNew(resident)){
+           saveNew(resident);
+       }
+       else {
+           update(resident);
+       }
         return resident;
     }
 
-    private void saveNew() {
+    private void saveNew(Resident resident) {
+        resident.setId(generateId());
+        residents.add(resident);
+    }
+
+    private boolean isNew(Resident resident) {
+        return resident.getId() == 0;
 
     }
 
@@ -37,8 +47,8 @@ public class Residents implements ResidentRepository{
     }
 
     @Override
-    public List<Resident> findAll() {
-        return List.of(resident).stream().toList();
+    public Object[] findAll() {
+        return residents.toArray();
     }
 
     @Override
@@ -66,6 +76,14 @@ public class Residents implements ResidentRepository{
     @Override
     public Long count() {
         return (long) residents.size();
+    }
+
+    private void update(Resident resident){
+        for(int count = 0; count < residents.size(); count++){
+            if(residents.get(count).getId() == resident.getId()){
+                residents.set(count, resident);
+            }
+        }
     }
 
 
